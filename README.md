@@ -1,47 +1,228 @@
-# VOICE2CASE
+# Voice2Case
 
-Voice2Case is a MERN customer-support tool that turns call transcripts (or configured audio recordings) into structured, editable support cases. It keeps a human support agent in charge: AI output is always reviewed before a case is saved.
+> Turn customer conversations into clear, consistent, and reviewable support cases.
 
-## Features
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-111111?logo=vercel)](https://voice2-case-ai-powered-customer-cal.vercel.app/login)
+[![Stack](https://img.shields.io/badge/Stack-MERN-47A248?logo=mongodb&logoColor=white)](#technology-stack)
 
-- Agent registration/login with bcrypt password hashing and JWT-protected APIs
-- Transcript analysis through OpenAI structured JSON output
-- OpenAI Whisper audio transcription for MP3, WAV, M4A, and WebM uploads
-- Manual case creation when AI is unavailable
-- Editable review screen, case IDs, notes, search, filters, sorting, deletion, and status updates
-- Database-backed dashboard statistics and insights
-- Responsive, accessible light and dark professional UI
+**[Open the live demo →](https://voice2-case-ai-powered-customer-cal.vercel.app/login)**
 
-## Stack and architecture
+Voice2Case is an AI-assisted customer-support documentation platform built with the MERN stack. A support agent can paste a customer conversation or upload a call recording, receive an AI-generated structured case, review every suggestion, make corrections, and save the final case for later management.
 
-React + Vite talks to an Express REST API. Express uses Mongoose/MongoDB for `User`, `SupportCase`, and `Note` documents. AI and transcription are isolated in `server/src/services`, so they can be replaced without changing routes or the UI.
+The AI assists the agent; it never becomes the final decision-maker.
 
-## Setup
+## Why this project was built
 
-1. Install Node.js 20+ and MongoDB locally (or create a MongoDB Atlas cluster).
-2. Copy `.env.example` into `server/.env`, set a strong `JWT_SECRET`, and update `MONGODB_URI`.
-3. Optionally add `AI_API_KEY` to enable AI analysis and transcription. The app supports OpenAI (`gpt-4o-mini` / `whisper-1`) or Groq (`openai/gpt-oss-20b` / `whisper-large-v3-turbo`). Set `AI_PROVIDER` to `openai` or `groq`. The app still permits manual transcript-to-case entry without it.
-4. Copy the client configuration line from `.env.example` into `client/.env` if your API is not at its default URL.
-5. Run `npm run install:all`, then `npm run seed`, then `npm run dev`.
+After a support interaction, agents often spend valuable time manually documenting the problem, intent, sentiment, troubleshooting already attempted, urgency, and required follow-up. Manual notes can be incomplete, inconsistent, and difficult to search later.
 
-Open `http://localhost:5173`. The health endpoint is `http://localhost:5000/api/health`.
+Voice2Case reduces that administrative work by converting a conversation into a structured support case while keeping the support agent in control. The agent reviews and edits all AI-generated content before anything is saved to the database.
 
-### Demo agent
+### Primary use case
 
-`agent@voice2case.demo` / `Agent123!` (seed/development only; do not use this account or password in production).
+1. A support agent receives a customer call or transcript.
+2. The agent uploads the recording or pastes the conversation.
+3. Audio is transcribed when necessary.
+4. AI extracts key support information into a structured draft.
+5. The agent reviews, edits, and approves the draft.
+6. The saved case can be searched, filtered, updated, and annotated with internal notes.
 
-## Key API endpoints
+## Key features
 
-- `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`
-- `GET|POST /api/cases`, `GET|PATCH|DELETE /api/cases/:caseId`
-- `GET|POST /api/cases/:caseId/notes`, `GET /api/cases/stats`
-- `POST /api/ai/analyze`, `POST /api/ai/transcribe`
-- `GET /api/health`
+### AI-assisted documentation
+
+- Upload valid MP3, WAV, M4A, or WebM support-call recordings.
+- Paste transcripts directly when an audio recording is unavailable.
+- Groq-powered Whisper transcription for uploaded audio.
+- Structured AI extraction of summary, issue, customer intent, category, priority, sentiment, key information, attempted troubleshooting, follow-up, next action, escalation, and requested outcome.
+- Safe handling for browser MIME inconsistencies: file extension and binary audio signature are verified before transcription.
+- Manual case creation remains available if the AI service is unavailable.
+
+### Human-in-the-loop review
+
+- Full transcript review and editing after audio transcription.
+- Every generated case field is editable before saving.
+- Re-analyze a corrected transcript when required.
+- AI output is stored only after support-agent approval.
+
+### Case management
+
+- Readable IDs such as `V2C-2026-000001`.
+- Dashboard counts for total, new, in-review, resolved, high-priority, and follow-up cases.
+- MongoDB-backed case insights: common category, negative sentiment, and escalation count.
+- Backend search across case ID, issue, intent, summary, category, and transcript.
+- Filters for status, priority, category, sentiment, and escalation.
+- Newest, oldest, and highest-priority sorting.
+- Case editing, status/priority updates, internal notes, and deletion.
+
+### Security and usability
+
+- Agent registration and login with bcrypt password hashing.
+- JWT-protected API routes and protected React routes.
+- Per-agent case access control.
+- Upload size limit, allowed extension/MIME checks, binary signature validation, and temporary file cleanup.
+- Responsive professional interface with persistent light and dark themes.
+- Helpful loading, empty, error, and success states.
+
+## Technology stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React, Vite, React Router, CSS |
+| Backend | Node.js, Express.js |
+| Database | MongoDB Atlas, Mongoose |
+| Authentication | JWT, bcryptjs |
+| AI analysis | Groq structured outputs using `openai/gpt-oss-20b` |
+| Speech-to-text | Groq `whisper-large-v3-turbo` |
+| Deployment | Vercel (frontend), Render (backend), MongoDB Atlas (database) |
+
+The AI integration is modular. The code also supports OpenAI-compatible configuration, allowing the provider to be switched through backend environment variables.
+
+## Architecture
+
+```text
+React + Vite client
+       │
+       │ HTTPS / REST API + Bearer JWT
+       ▼
+Express API on Render
+ ├── Authentication middleware
+ ├── Case, note, and dashboard controllers
+ ├── Audio validation + temporary upload handling
+ ├── Transcription service
+ └── Structured AI analysis service
+       │                         │
+       ▼                         ▼
+MongoDB Atlas                 Groq APIs
+```
+
+## Project structure
+
+```text
+Voice2Case/
+├── client/                  # React + Vite application
+│   └── src/
+│       ├── main.jsx          # Routes, pages, UI components
+│       ├── api.js            # Authenticated API client
+│       └── styles.css         # Responsive light/dark design
+├── server/                  # Express API
+│   └── src/
+│       ├── controllers/      # Auth, case, and AI request handling
+│       ├── middleware/       # JWT and error middleware
+│       ├── models/           # User, SupportCase, Note schemas
+│       ├── routes/           # REST endpoints
+│       └── services/         # AI, transcription, upload validation
+├── README.md
+└── PROJECT_DOCUMENTATION.md
+```
+
+## Run locally
+
+### Prerequisites
+
+- Node.js 20 or newer
+- MongoDB locally or a MongoDB Atlas cluster
+- A Groq API key for transcription and AI analysis (optional for manual case creation)
+
+### 1. Install dependencies
+
+From the project root:
+
+```bash
+npm install
+npm install --prefix server
+npm install --prefix client
+```
+
+### 2. Configure the backend
+
+Create `server/.env`:
+
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/voice2case
+JWT_SECRET=replace-with-a-long-random-secret
+JWT_EXPIRES_IN=7d
+CLIENT_URL=http://localhost:5173
+
+AI_PROVIDER=groq
+GROQ_API_KEY=your-groq-api-key
+AI_MODEL=openai/gpt-oss-20b
+TRANSCRIPTION_MODEL=whisper-large-v3-turbo
+```
+
+You may use `AI_API_KEY` instead of `GROQ_API_KEY`. Do not define both with different values.
+
+### 3. Configure the frontend (optional locally)
+
+Create `client/.env` only if the API is not running at the default local address:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+### 4. Seed demo data and start
+
+```bash
+npm run seed
+npm run dev
+```
+
+Open `http://localhost:5173`.
+
+### Demo account
+
+```text
+Email:    agent@voice2case.demo
+Password: Agent123!
+```
+
+This account is for local/demo use only. Do not use this password in a real production environment.
+
+## API overview
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/api/auth/register` | Register an agent |
+| `POST` | `/api/auth/login` | Log in and receive a JWT |
+| `GET` | `/api/auth/me` | Validate the current agent |
+| `GET` / `POST` | `/api/cases` | Search/list cases or create a reviewed case |
+| `GET` / `PATCH` / `DELETE` | `/api/cases/:caseId` | View, edit, or delete a case |
+| `GET` / `POST` | `/api/cases/:caseId/notes` | List or add internal notes |
+| `GET` | `/api/cases/stats` | Dashboard statistics and insights |
+| `POST` | `/api/ai/transcribe` | Transcribe a verified audio upload |
+| `POST` | `/api/ai/analyze` | Generate structured case information |
+| `GET` | `/api/health` | Backend health check |
 
 ## Deployment
 
-Deploy the client to Vercel and server to Render, point `VITE_API_URL` to the deployed `/api` URL, set `CLIENT_URL` to the Vercel origin, and use MongoDB Atlas for `MONGODB_URI`. Add all environment variables in each platform’s dashboard; never commit `.env` files.
+The live application uses:
 
-## Screenshots
+- Frontend: [Vercel live demo](https://voice2-case-ai-powered-customer-cal.vercel.app/login)
+- Backend: Render
+- Database: MongoDB Atlas
+- AI: Groq
 
-Run the application locally and add screenshots here if desired.
+For deployment, add backend secrets (`MONGODB_URI`, `JWT_SECRET`, `GROQ_API_KEY`) only in Render. Add only this public build-time value in Vercel:
+
+```env
+VITE_API_URL=https://YOUR_RENDER_SERVICE.onrender.com/api
+```
+
+Set Render's `CLIENT_URL` to the exact Vercel production URL. Never commit `.env` files, database credentials, API keys, or JWT secrets.
+
+## Future improvements
+
+- Role-based admin dashboard and team-wide case queues
+- Pagination UI and exported case reports
+- Automated test suite with integration tests
+- Audit history for field changes
+- Optional secure cloud storage for recordings when retention is required
+- Provider-specific analytics and quality evaluation for AI output
+
+## Documentation
+
+For a beginner-friendly explanation of the architecture, models, security, workflows, AI design, and interview preparation, read [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md).
+
+---
+
+Built as a practical customer-support workflow tool: faster documentation, consistent records, and human control over every saved case.

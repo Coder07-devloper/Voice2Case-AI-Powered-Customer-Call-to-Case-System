@@ -5,7 +5,7 @@
 <img width="1348" height="600" alt="Screenshot 2026-09-11 032135" src="https://github.com/user-attachments/assets/81e1f104-3a2c-4ae0-9fe1-927455dcc666" />
 
 
-**[Open the live demo →](https://voice2-case-ai-powered-customer-cal.vercel.app/login)**
+live demo → (https://voice2-case-ai-powered-customer-cal.vercel.app/)
 
 Voice2Case is an AI-assisted customer-support documentation platform built with the MERN stack. A support agent can paste a customer conversation or upload a call recording, receive an AI-generated structured case, review every suggestion, make corrections, and save the final case for later management.
 
@@ -178,21 +178,6 @@ Password: Agent123!
 
 This account is for local/demo use only. Do not use this password in a real production environment.
 
-## API overview
-
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `POST` | `/api/auth/register` | Register an agent |
-| `POST` | `/api/auth/login` | Log in and receive a JWT |
-| `GET` | `/api/auth/me` | Validate the current agent |
-| `GET` / `POST` | `/api/cases` | Search/list cases or create a reviewed case |
-| `GET` / `PATCH` / `DELETE` | `/api/cases/:caseId` | View, edit, or delete a case |
-| `GET` / `POST` | `/api/cases/:caseId/notes` | List or add internal notes |
-| `GET` | `/api/cases/stats` | Dashboard statistics and insights |
-| `POST` | `/api/ai/transcribe` | Transcribe a verified audio upload |
-| `POST` | `/api/ai/analyze` | Generate structured case information |
-| `GET` | `/api/health` | Backend health check |
-
 ## Deployment
 
 The live application uses:
@@ -218,11 +203,3 @@ Set Render's `CLIENT_URL` to the exact Vercel production URL. Never commit `.env
 - Audit history for field changes
 - Optional secure cloud storage for recordings when retention is required
 - Provider-specific analytics and quality evaluation for AI output
-
-## Documentation
-
-For a beginner-friendly explanation of the architecture, models, security, workflows, AI design, and interview preparation, read [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md).
-
----
-
-Built as a practical customer-support workflow tool: faster documentation, consistent records, and human control over every saved case.

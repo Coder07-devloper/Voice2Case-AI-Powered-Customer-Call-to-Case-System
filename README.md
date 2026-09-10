@@ -2,8 +2,8 @@
 
 > Turn customer conversations into clear, consistent, and reviewable support cases.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-111111?logo=vercel)](https://voice2-case-ai-powered-customer-cal.vercel.app/login)
-[![Stack](https://img.shields.io/badge/Stack-MERN-47A248?logo=mongodb&logoColor=white)](#technology-stack)
+<img width="1348" height="600" alt="Screenshot 2026-09-11 032135" src="https://github.com/user-attachments/assets/81e1f104-3a2c-4ae0-9fe1-927455dcc666" />
+
 
 **[Open the live demo →](https://voice2-case-ai-powered-customer-cal.vercel.app/login)**
 
